@@ -1,0 +1,280 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from cv2 import CascadeClassifier\n",
+    "from cv2 import cvtColor\n",
+    "from cv2 import COLOR_BGR2GRAY\n",
+    "from cv2 import FONT_HERSHEY_COMPLEX_SMALL\n",
+    "from cv2 import rectangle\n",
+    "from cv2 import putText\n",
+    "from cv2 import imshow\n",
+    "from cv2 import waitKey\n",
+    "from cv2 import VideoCapture\n",
+    "import cv2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "haarcascade=r\"C:\\Users\\user\\OneDrive\\Desktop\\Autopark\\mark6\\haarcascade_russian_plate_number.xml\"\n",
+    "\n",
+    "cap=VideoCapture(0)\n",
+    "cap.set(3,640) #Width\n",
+    "cap.set(4,480) #Height\n",
+    "min_area=500\n",
+    "count=0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "KeyboardInterrupt",
+     "evalue": "",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mKeyboardInterrupt\u001b[0m                         Traceback (most recent call last)",
+      "\u001b[1;32mc:\\Users\\user\\OneDrive\\Desktop\\Autopark\\mark6\\try_1.ipynb Cell 3\u001b[0m in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[0;32m      <a href='vscode-notebook-cell:/c%3A/Users/user/OneDrive/Desktop/Autopark/mark6/try_1.ipynb#W2sZmlsZQ%3D%3D?line=0'>1</a>\u001b[0m \u001b[39mwhile\u001b[39;00m(\u001b[39mTrue\u001b[39;00m):\n\u001b[1;32m----> <a href='vscode-notebook-cell:/c%3A/Users/user/OneDrive/Desktop/Autopark/mark6/try_1.ipynb#W2sZmlsZQ%3D%3D?line=1'>2</a>\u001b[0m     success,img\u001b[39m=\u001b[39mcap\u001b[39m.\u001b[39;49mread()\n\u001b[0;32m      <a href='vscode-notebook-cell:/c%3A/Users/user/OneDrive/Desktop/Autopark/mark6/try_1.ipynb#W2sZmlsZQ%3D%3D?line=2'>3</a>\u001b[0m     plate_cascade\u001b[39m=\u001b[39mCascadeClassifier(haarcascade)\n\u001b[0;32m      <a href='vscode-notebook-cell:/c%3A/Users/user/OneDrive/Desktop/Autopark/mark6/try_1.ipynb#W2sZmlsZQ%3D%3D?line=3'>4</a>\u001b[0m     img_gray\u001b[39m=\u001b[39mcvtColor(img, COLOR_BGR2GRAY)\n",
+      "\u001b[1;31mKeyboardInterrupt\u001b[0m: "
+     ]
+    }
+   ],
+   "source": [
+    "while(True):\n",
+    "    success,img=cap.read()\n",
+    "    plate_cascade=CascadeClassifier(haarcascade)\n",
+    "    img_gray=cvtColor(img, COLOR_BGR2GRAY)\n",
+    "    plates=plate_cascade.detectMultiScale(img_gray,1.1,4)\n",
+    "\n",
+    "    for(x,y,w,h) in plates:\n",
+    "        area=w*h\n",
+    "        if area>min_area:\n",
+    "            rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)\n",
+    "            putText(img,\"Number Plate\",(x,y-5),FONT_HERSHEY_COMPLEX_SMALL,1,(255,0,255),2)\n",
+    "\n",
+    "            img_roi=img[y:y+h,x:x+w]\n",
+    "            imshow(\"ROI\",img_roi)\n",
+    "\n",
+    "    cv2.namedWindow(\"Result\", cv2.WINDOW_GUI_NORMAL)\n",
+    "    imshow(\"Result\", img)\n",
+    "    waitKey(1)\n",
+    "\n",
+    "    if waitKey(1) & 0xFF == ord('s'):\n",
+    "        cv2.imwrite(r\"C:\\Users\\user\\OneDrive\\Desktop\\Autopark\\mark6\\plates\\scanned_img_\"+str(count)+\".jpg\",img_roi)\n",
+    "        rectangle(img,(0,200),(640,300),(0,255,0),cv2.FILLED)\n",
+    "        putText(img,\"plate saved\",(150,265),FONT_HERSHEY_COMPLEX_SMALL,2,(0,0,255),2)\n",
+    "        imshow(\"Results\",img)\n",
+    "        waitKey(500)\n",
+    "        count+=1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# import easyocr\n",
+    "# from IPython.display import Image"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Image(r\"C:\\Users\\user\\OneDrive\\Desktop\\Autopark\\mark6\\plates\\scanned_img_2.jpg\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# reader=easyocr.Reader(['en'])\n",
+    "# output=reader.readtext(r'C:\\Users\\user\\OneDrive\\Desktop\\Autopark\\mark6\\plates\\scanned_img_2.jpg')\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# output\n",
+    "# recognized_text=output[0][1]\n",
+    "# recognized_text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# import csv\n",
+    "# from datetime import datetime\n",
+    "\n",
+    "# # Create a new row for the CSV file with the recognized text and current time\n",
+    "# row = [recognized_text, datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")]\n",
+    "\n",
+    "# # Open the CSV file in append mode and add the row\n",
+    "# with open('recognized_plates.csv', mode='a', newline='') as csv_file:\n",
+    "#     writer = csv.writer(csv_file)\n",
+    "#     writer.writerow(row)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "CUDA not available - defaulting to CPU. Note: This module is much faster with a GPU.\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Processed file 1/3: scanned_img_0.jpg\n",
+      "Processed file 2/3: scanned_img_1.jpg\n",
+      "Processed file 3/3: scanned_img_2.jpg\n"
+     ]
+    }
+   ],
+   "source": [
+    "import os\n",
+    "from datetime import datetime\n",
+    "import csv\n",
+    "import easyocr\n",
+    "\n",
+    "# Set up EasyOCR reader\n",
+    "reader = easyocr.Reader(['en'])\n",
+    "\n",
+    "# Set up directory path and get all image file names\n",
+    "dir_path = r\"C:\\Users\\user\\OneDrive\\Desktop\\Autopark\\mark6\\plates\"\n",
+    "file_names = [f for f in os.listdir(dir_path) if f.endswith('.jpg')]\n",
+    "\n",
+    "# Loop through all image files and extract text\n",
+    "for i, file_name in enumerate(file_names):\n",
+    "    # Read image and extract text\n",
+    "    img_path = os.path.join(dir_path, file_name)\n",
+    "    recognized_text = reader.readtext(img_path)[0][1]\n",
+    "    \n",
+    "    # Get current system time and format it\n",
+    "    now = datetime.now()\n",
+    "    time_str = now.strftime(\"%Y-%m-%d %H:%M:%S\")\n",
+    "    \n",
+    "    # Save text and time to CSV file\n",
+    "    with open('plate_text.csv', mode='a') as file:\n",
+    "        writer = csv.writer(file)\n",
+    "        writer.writerow([time_str, recognized_text])\n",
+    "        \n",
+    "    print(f\"Processed file {i+1}/{len(file_names)}: {file_name}\")\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "CUDA not available - defaulting to CPU. Note: This module is much faster with a GPU.\n",
+      "CUDA not available - defaulting to CPU. Note: This module is much faster with a GPU.\n",
+      "CUDA not available - defaulting to CPU. Note: This module is much faster with a GPU.\n"
+     ]
+    }
+   ],
+   "source": [
+    "import os\n",
+    "import csv\n",
+    "import time\n",
+    "import easyocr\n",
+    "from IPython.display import Image\n",
+    "\n",
+    "# Rate per hour (in USD)\n",
+    "rate = 2.5\n",
+    "\n",
+    "# Dictionary to store number plate, in-time, and out-time\n",
+    "vehicles = {}\n",
+    "\n",
+    "# Loop through all the files in the directory\n",
+    "for filename in os.listdir(\"plates\"):\n",
+    "    # Check if the file is an image file\n",
+    "    if filename.endswith(\".jpg\"):\n",
+    "        # Read the number plate text using EasyOCR\n",
+    "        reader = easyocr.Reader(['en'])\n",
+    "        output = reader.readtext(os.path.join(\"plates\", filename))\n",
+    "        recognized_text = output[0][1]\n",
+    "\n",
+    "        # Check if the number plate text already exists in the dictionary\n",
+    "        if recognized_text in vehicles:\n",
+    "            # If the number plate text already exists, get the in-time and out-time\n",
+    "            in_time = vehicles[recognized_text][\"in_time\"]\n",
+    "            out_time = time.time()\n",
+    "\n",
+    "            # Calculate the difference between the in-time and out-time\n",
+    "            time_diff = out_time - in_time\n",
+    "\n",
+    "            # Calculate the amount based on the time difference and rate\n",
+    "            amount = round(time_diff / 3600 * rate, 2)\n",
+    "\n",
+    "            # Save the amount in the dictionary\n",
+    "            vehicles[recognized_text][\"amount\"] = amount\n",
+    "        else:\n",
+    "            # If the number plate text does not exist, add it to the dictionary with the current time as in-time\n",
+    "            in_time = time.time()\n",
+    "            vehicles[recognized_text] = {\"in_time\": in_time}\n",
+    "\n",
+    "# Save the data to a CSV file\n",
+    "with open(\"parking_data.csv\", mode=\"w\", newline=\"\") as file:\n",
+    "    writer = csv.writer(file)\n",
+    "    writer.writerow([\"Number Plate\", \"In-Time\", \"Out-Time\", \"Amount\"])\n",
+    "    for key in vehicles.keys():\n",
+    "        writer.writerow([key, vehicles[key][\"in_time\"], vehicles[key].get(\"out_time\", \"\"), vehicles[key].get(\"amount\", \"\")])\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.4"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
